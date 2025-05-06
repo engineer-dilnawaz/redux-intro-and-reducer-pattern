@@ -1,5 +1,4 @@
 import { createStore } from "redux";
-import { myCreateStore } from "./my-redux";
 
 const postCountElement = document.querySelector(".post-count");
 
@@ -76,38 +75,22 @@ const store = createStore(
   reducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
-const myStore = myCreateStore(reducer);
-
 console.log(store);
-console.log(myStore);
-const unsubscribe = myStore.subscribe(function () {
-  console.log(myStore.getState(), "First");
-  postCountElement.innerText = myStore.getState().post;
+const unsubscribe = store.subscribe(function () {
+  console.log(store.getState());
+  postCountElement.innerText = store.getState().post;
 });
 
-const unsubscribe1 = myStore.subscribe(function () {
-  console.log("H1 1");
-  postCountElement.innerText = myStore.getState().post;
-});
-
-const unsubscribe2 = myStore.subscribe(function () {
-  console.log("H1 2");
-  postCountElement.innerText = myStore.getState().post;
-});
-myStore.dispatch({ type: INCREMENT });
-unsubscribe2();
-unsubscribe1();
 // unsubscribe();
 
-postCountElement.innerText = myStore.getState().post;
+postCountElement.innerText = store.getState().post;
 
 // console.log(store.getState());
-myStore.dispatch({ type: INCREMENT });
-// console.log(myStore.getState());
-myStore.dispatch({ type: INCREASE_BY, payload: 10 });
-
-myStore.dispatch({ type: DECREASE_BY, payload: 5 });
+store.dispatch({ type: INCREMENT });
+// console.log(store.getState());
+store.dispatch({ type: INCREASE_BY, payload: 10 });
+store.dispatch({ type: DECREASE_BY, payload: 5 });
 
 postCountElement.addEventListener("click", function () {
-  myStore.dispatch({ type: INCREMENT });
+  store.dispatch({ type: INCREMENT });
 });
