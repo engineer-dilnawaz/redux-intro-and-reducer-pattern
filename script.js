@@ -103,4 +103,4 @@ store.dispatch({
   payload: { productId: 1 },
 });
 
-console.log(store.getState().wishList);
+console.log(store.getState());
