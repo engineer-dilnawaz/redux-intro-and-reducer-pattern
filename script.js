@@ -1,4 +1,7 @@
-import { combineReducers, createStore } from "redux";
+import {
+  // combineReducers,
+  createStore,
+} from "redux";
 
 import cartReducer, {
   CART_ADD_ITEM,
@@ -11,6 +14,24 @@ import wishListReducer, {
   WISHLIST_REMOVE_ITEM,
 } from "./wishListReducer";
 import productsReducer from "./productsReducer";
+
+function combineReducers(reducers) {
+  const reducerKeys = Object.keys(reducers);
+
+  return function (state = {}, action) {
+    const nextState = {};
+
+    for (let i = 0; i < reducerKeys.length; i++) {
+      const key = reducerKeys[i];
+      const reducer = reducers[key];
+      const previousStateForKey = state[key];
+      const nextStateForKey = reducer(previousStateForKey, action);
+      nextState[key] = nextStateForKey;
+    }
+
+    return nextState;
+  };
+}
 
 const rootReducer = combineReducers({
   products: productsReducer,
