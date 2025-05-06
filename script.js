@@ -1,113 +1,159 @@
 import { createStore } from "redux";
-import { myCreateStore } from "./my-redux";
 
-const postCountElement = document.querySelector(".post-count");
+import { productsList } from "./productsList";
 
 const initialState = {
-  count: 0,
-  name: "Dilnawaz",
-  age: 27,
-  post: 0,
+  products: productsList,
+  cartItems: [],
+  wishList: [],
 };
 
-// let prevState = state;
+const CART_ADD_ITEM = "cart/addItem";
+const CART_REMOVE_ITEM = "cart/removeItem";
+const CART_INCREASE_ITEM_QUANTITY = "cart/increaseItemQuantity";
+const CART_DECREASE_ITEM_QUANTITY = "cart/decreaseItemQuantity";
 
-// function increment() {
-//   // mutating state
-//   //   state.count = state.count + 1;
-
-//   // not mutating state
-//   state = { ...state, count: state.count + 1 };
-// }
-
-// increment();
-// console.log(state);
-// increment();
-// console.log(state);
-// increment();
-// console.log(state);
-
-const INCREMENT = "post/increment";
-const DECREMENT = "post/decrement";
-const INCREASE_BY = "post/increasetBy";
-const DECREASE_BY = "post/decreasetBy";
+const WISHLIST_ADD_ITEM = "wishList/addItem";
+const WISHLIST_REMOVE_ITEM = "wishList/removeItem";
 
 function reducer(state = initialState, action) {
+  console.log(action);
   switch (action.type) {
-    case INCREMENT:
-      return { ...state, post: state.post + 1 };
-    case DECREMENT:
-      return { ...state, post: state.post - 1 };
-    case INCREASE_BY:
-      return { ...state, post: state.post + action.payload };
-    case DECREASE_BY:
-      return { ...state, post: state.post - action.payload };
+    case CART_ADD_ITEM:
+      return { ...state, cartItems: [...state.cartItems, action.payload] };
+    case CART_REMOVE_ITEM:
+      return {
+        ...state,
+        cartItems: state.cartItems.filter(
+          (item) => item.productId !== action.payload.productId
+        ),
+      };
+    case CART_INCREASE_ITEM_QUANTITY:
+      return {
+        ...state,
+        cartItems: state.cartItems.map((cartItem) => {
+          if (cartItem.productId === action.payload.productId)
+            return {
+              ...cartItem,
+              quantity: cartItem.quantity + 1,
+            };
+          return cartItem;
+        }),
+      };
+    case CART_DECREASE_ITEM_QUANTITY:
+      return {
+        ...state,
+        cartItems: state.cartItems
+          .map((cartItem) => {
+            if (cartItem.productId === action.payload.productId)
+              return {
+                ...cartItem,
+                quantity: cartItem.quantity - 1,
+              };
+            return cartItem;
+          })
+          .filter((cartItem) => cartItem.quantity > 0),
+      };
+    case WISHLIST_ADD_ITEM:
+      return {
+        ...state,
+        wishList: [...state.wishList, action.payload.productId],
+      };
+    case WISHLIST_REMOVE_ITEM:
+      return {
+        ...state,
+        wishList: state.wishList.filter(
+          (product) => product !== action.payload.productId
+        ),
+      };
     default:
       return state;
   }
-  //   if (action.type === INCREMENT) {
-  //     return { ...state, post: state.post + 1 };
-  //   } else if (action.type === DECREMENT) {
-  //     return { ...state, post: state.post - 1 };
-  //   } else if (action.type === INCREASE_BY) {
-  //     return { ...state, post: state.post + action.payload };
-  //   } else if (action.type === DECREASE_BY) {
-  //     return { ...state, post: state.post - action.payload };
-  //   }
-  //   return state;
 }
-
-// // What redux will do
-// console.log(state);
-// state = reducer(state, { type: "post/increment" });
-// console.log(state);
-// state = reducer(state, { type: "post/increment" });
-// console.log(state);
-// state = reducer(state, { type: "post/decrement" });
-// console.log(state);
-// state = reducer(state, { type: "post/incrementBy", payload: 10 });
-// console.log(state);
-// state = reducer(state, { type: "post/incrementBy", payload: 10 });
-// console.log(state);
-// state = reducer(state, { type: "post/incrementBy", payload: 10 });
-// console.log(state);
 
 const store = createStore(
   reducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
-const myStore = myCreateStore(reducer);
 
-console.log(store);
-console.log(myStore);
-const unsubscribe = myStore.subscribe(function () {
-  console.log(myStore.getState(), "First");
-  postCountElement.innerText = myStore.getState().post;
+store.dispatch({
+  type: CART_ADD_ITEM,
+  payload: { productId: 1, quantity: 1 },
+});
+store.dispatch({
+  type: CART_ADD_ITEM,
+  payload: { productId: 12, quantity: 1 },
+});
+store.dispatch({
+  type: CART_ADD_ITEM,
+  payload: { productId: 18, quantity: 1 },
+});
+store.dispatch({
+  type: CART_ADD_ITEM,
+  payload: { productId: 5, quantity: 1 },
 });
 
-const unsubscribe1 = myStore.subscribe(function () {
-  console.log("H1 1");
-  postCountElement.innerText = myStore.getState().post;
+store.dispatch({
+  type: CART_REMOVE_ITEM,
+  payload: { productId: 18 },
 });
 
-const unsubscribe2 = myStore.subscribe(function () {
-  console.log("H1 2");
-  postCountElement.innerText = myStore.getState().post;
+store.dispatch({
+  type: CART_REMOVE_ITEM,
+  payload: { productId: 12 },
 });
-myStore.dispatch({ type: INCREMENT });
-unsubscribe2();
-unsubscribe1();
-// unsubscribe();
 
-postCountElement.innerText = myStore.getState().post;
-
-// console.log(store.getState());
-myStore.dispatch({ type: INCREMENT });
-// console.log(myStore.getState());
-myStore.dispatch({ type: INCREASE_BY, payload: 10 });
-
-myStore.dispatch({ type: DECREASE_BY, payload: 5 });
-
-postCountElement.addEventListener("click", function () {
-  myStore.dispatch({ type: INCREMENT });
+store.dispatch({
+  type: CART_INCREASE_ITEM_QUANTITY,
+  payload: { productId: 5 },
 });
+store.dispatch({
+  type: CART_INCREASE_ITEM_QUANTITY,
+  payload: { productId: 5 },
+});
+store.dispatch({
+  type: CART_INCREASE_ITEM_QUANTITY,
+  payload: { productId: 5 },
+});
+store.dispatch({
+  type: CART_DECREASE_ITEM_QUANTITY,
+  payload: { productId: 5 },
+});
+store.dispatch({
+  type: CART_DECREASE_ITEM_QUANTITY,
+  payload: { productId: 5 },
+});
+store.dispatch({
+  type: CART_DECREASE_ITEM_QUANTITY,
+  payload: { productId: 5 },
+});
+store.dispatch({
+  type: CART_DECREASE_ITEM_QUANTITY,
+  payload: { productId: 5 },
+});
+store.dispatch({
+  type: CART_DECREASE_ITEM_QUANTITY,
+  payload: { productId: 5 },
+});
+
+store.dispatch({
+  type: WISHLIST_ADD_ITEM,
+  payload: { productId: 1 },
+});
+
+store.dispatch({
+  type: WISHLIST_ADD_ITEM,
+  payload: { productId: 15 },
+});
+
+store.dispatch({
+  type: WISHLIST_ADD_ITEM,
+  payload: { productId: 8 },
+});
+
+store.dispatch({
+  type: WISHLIST_REMOVE_ITEM,
+  payload: { productId: 1 },
+});
+
+console.log(store.getState().wishList);
