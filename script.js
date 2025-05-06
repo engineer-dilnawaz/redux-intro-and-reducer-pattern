@@ -1,16 +1,16 @@
 import { combineReducers, createStore } from "redux";
 
 import cartReducer, {
-  CART_ADD_ITEM,
-  CART_DECREASE_ITEM_QUANTITY,
-  CART_INCREASE_ITEM_QUANTITY,
-  CART_REMOVE_ITEM,
+  addCartItem,
+  decreaseCartItemQuantity,
+  increaseCartItemQuantity,
+  removeCartItem,
 } from "./cartReducer";
-import wishListReducer, {
-  WISHLIST_ADD_ITEM,
-  WISHLIST_REMOVE_ITEM,
-} from "./wishListReducer";
 import productsReducer from "./productsReducer";
+import wishListReducer, {
+  addWishlistItem,
+  removeWishlistItem,
+} from "./wishListReducer";
 
 const rootReducer = combineReducers({
   products: productsReducer,
@@ -23,84 +23,22 @@ const store = createStore(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
-store.dispatch({
-  type: CART_ADD_ITEM,
-  payload: { productId: 1, quantity: 1 },
-});
-store.dispatch({
-  type: CART_ADD_ITEM,
-  payload: { productId: 12, quantity: 1 },
-});
-store.dispatch({
-  type: CART_ADD_ITEM,
-  payload: { productId: 18, quantity: 1 },
-});
-store.dispatch({
-  type: CART_ADD_ITEM,
-  payload: { productId: 5, quantity: 1 },
-});
+store.dispatch(addCartItem(1, 5));
+store.dispatch(addCartItem(12));
 
-store.dispatch({
-  type: CART_REMOVE_ITEM,
-  payload: { productId: 18 },
-});
+store.dispatch(removeCartItem(18));
+store.dispatch(removeCartItem(12));
 
-store.dispatch({
-  type: CART_REMOVE_ITEM,
-  payload: { productId: 12 },
-});
+store.dispatch(increaseCartItemQuantity(5));
+store.dispatch(increaseCartItemQuantity(5));
 
-store.dispatch({
-  type: CART_INCREASE_ITEM_QUANTITY,
-  payload: { productId: 5 },
-});
-store.dispatch({
-  type: CART_INCREASE_ITEM_QUANTITY,
-  payload: { productId: 5 },
-});
-store.dispatch({
-  type: CART_INCREASE_ITEM_QUANTITY,
-  payload: { productId: 5 },
-});
-store.dispatch({
-  type: CART_DECREASE_ITEM_QUANTITY,
-  payload: { productId: 5 },
-});
-store.dispatch({
-  type: CART_DECREASE_ITEM_QUANTITY,
-  payload: { productId: 5 },
-});
-store.dispatch({
-  type: CART_DECREASE_ITEM_QUANTITY,
-  payload: { productId: 5 },
-});
-store.dispatch({
-  type: CART_DECREASE_ITEM_QUANTITY,
-  payload: { productId: 5 },
-});
-store.dispatch({
-  type: CART_DECREASE_ITEM_QUANTITY,
-  payload: { productId: 5 },
-});
+store.dispatch(decreaseCartItemQuantity(5));
+store.dispatch(decreaseCartItemQuantity(5));
 
-store.dispatch({
-  type: WISHLIST_ADD_ITEM,
-  payload: { productId: 1 },
-});
+store.dispatch(addWishlistItem(1));
+store.dispatch(addWishlistItem(15));
 
-store.dispatch({
-  type: WISHLIST_ADD_ITEM,
-  payload: { productId: 15 },
-});
-
-store.dispatch({
-  type: WISHLIST_ADD_ITEM,
-  payload: { productId: 8 },
-});
-
-store.dispatch({
-  type: WISHLIST_REMOVE_ITEM,
-  payload: { productId: 1 },
-});
+store.dispatch(addWishlistItem(8));
+store.dispatch(removeWishlistItem(1));
 
 console.log(store.getState());
